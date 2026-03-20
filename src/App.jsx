@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
     navLinks,
     heroData,
@@ -85,6 +85,7 @@ function App() {
         phone: "",
         message: ""
     });
+    const bookingSectionRef = useRef(null);
 
     const filteredPortfolio = useMemo(() => {
         if (activeFilter === "all") return portfolioItems;
@@ -112,12 +113,23 @@ function App() {
         }));
     };
 
+    const scrollBookingSectionIntoView = () => {
+        window.requestAnimationFrame(() => {
+            bookingSectionRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        });
+    };
+
     const nextBookingStep = () => {
         setBookingStep((prev) => Math.min(prev + 1, 3));
+        scrollBookingSectionIntoView();
     };
 
     const prevBookingStep = () => {
         setBookingStep((prev) => Math.max(prev - 1, 1));
+        scrollBookingSectionIntoView();
     };
 
     const handleBookingSubmit = async (event) => {
@@ -391,7 +403,7 @@ function App() {
                     </div>
                 </section>
 
-                <section id="booking" className="section section-light">
+                <section id="booking" className="section section-light" ref={bookingSectionRef}>
                     <div className="container narrow-header">
                         <h2>Book Your Shoot</h2>
                         <p>Schedule your real estate shoot in three simple steps.</p>
