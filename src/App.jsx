@@ -71,6 +71,8 @@ const accessTypeOptions = [
     }
 ];
 
+const portfolioHoverLabel = "Veramendi Model Home in New Braunfels, TX";
+
 function encodeFormData(data) {
     return new URLSearchParams(data).toString();
 }
@@ -256,15 +258,18 @@ function App() {
                         ))}
                     </div>
 
-                    <div className="container">
-                        <div className="portfolio-grid">
-                            {filteredPortfolio.map((item) => (
-                                <article key={item.title} className="portfolio-card">
-                                    <img src={item.image} alt={item.alt} />
-                                </article>
-                            ))}
+                        <div className="container">
+                            <div className="portfolio-grid">
+                                {filteredPortfolio.map((item) => (
+                                    <article key={item.title} className="portfolio-card">
+                                        <img src={item.image} alt={item.alt} />
+                                        <div className="portfolio-card-overlay">
+                                            <p>{portfolioHoverLabel}</p>
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
                         </div>
-                    </div>
                 </section>
 
                 <section id="services" className="section section-soft">
