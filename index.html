@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alyssa Ashley Real Estate Media</title>
+    <meta
+        name="description"
+        content="Professional real estate photography for San Antonio, Selma, and surrounding areas."
+    />
+</head>
+<body>
+    <form name="booking" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+        <input type="hidden" name="form-name" value="booking" />
+        <input type="text" name="streetAddress" />
+        <input type="text" name="city" />
+        <input type="text" name="state" />
+        <input type="text" name="zipCode" />
+        <input type="text" name="squareFootage" />
+        <input type="text" name="bedrooms" />
+        <input type="text" name="bathrooms" />
+        <input type="text" name="occupancy" />
+        <input type="text" name="package" />
+        <input type="text" name="preferredDate" />
+        <input type="text" name="preferredTime" />
+        <input type="text" name="alternateDate" />
+        <input type="text" name="alternateTime" />
+        <textarea name="notes"></textarea>
+        <input type="text" name="name" />
+        <input type="email" name="email" />
+        <input type="tel" name="phone" />
+        <input type="text" name="accessType" />
+        <textarea name="accessDetails"></textarea>
+        <input type="text" name="bot-field" />
+    </form>
+    <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+        <input type="hidden" name="form-name" value="contact" />
+        <input type="text" name="name" />
+        <input type="email" name="email" />
+        <input type="tel" name="phone" />
+        <textarea name="message"></textarea>
+        <input type="text" name="bot-field" />
+    </form>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
