@@ -97,16 +97,16 @@ export const portfolioItems = [
         alt: "Bathroom vanity and shower"
     },
     {
-        title: "Patio",
-        category: "exterior",
-        image: "/images/portfolio-exterior-2.jpg",
-        alt: "Outdoor patio seating area"
-    },
-    {
         title: "Dining Area",
         category: "interior",
         image: "/images/portfolio-interior-6.jpg",
         alt: "Dining area with large windows"
+    },
+    {
+        title: "Patio",
+        category: "exterior",
+        image: "/images/portfolio-exterior-2.jpg",
+        alt: "Outdoor patio seating area"
     }
 ];
 
