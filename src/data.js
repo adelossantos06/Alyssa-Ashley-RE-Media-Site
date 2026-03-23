@@ -9,7 +9,7 @@ export const navLinks = [
 export const heroData = {
     title: "Capturing Homes.\nElevating Listings.",
     subtitle:
-        "Professional real estate photography that makes properties shine.",
+        "Professional real estate photography for Selma, New Braunfels, San Antonio, and surrounding Texas Hill Country communities.",
     primaryCta: {
         label: "Get Started",
         href: "#booking"
@@ -275,7 +275,7 @@ export const contactDetails = {
 
 export const footerData = {
     description:
-        "Professional real estate photography services that make your properties stand out in the market.",
+        "Professional real estate photography in Selma, New Braunfels, San Antonio, and surrounding areas that helps listings stand out.",
     quickLinks: ["Home", "Portfolio", "Services", "About", "Contact"],
     services: [
         "Interior Photography",
