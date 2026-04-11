@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
     navLinks,
     heroData,
@@ -8,8 +8,6 @@ import {
     serviceAreaGroups,
     pricingData,
     howItWorksSteps,
-    bookingSteps,
-    bookingPackages,
     contactDetails,
     footerData
 } from "./data";
@@ -20,57 +18,6 @@ const portfolioFilters = [
     { label: "Exterior", value: "exterior" }
 ];
 
-const initialBookingForm = {
-    streetAddress: "",
-    city: "",
-    state: "TX",
-    zipCode: "",
-    squareFootage: "",
-    bedrooms: "",
-    bathrooms: "",
-    occupancy: "vacant",
-    package: "standard",
-    preferredDate: "",
-    preferredTime: "",
-    alternateDate: "",
-    alternateTime: "",
-    notes: "",
-    name: "",
-    email: "",
-    phone: "",
-    accessType: "meet-onsite",
-    accessDetails: ""
-};
-
-const packagePricingById = {
-    basic: "Basic Listing",
-    standard: "Standard Listing",
-    premium: "Premium Listing"
-};
-
-const accessTypeOptions = [
-    {
-        value: "meet-onsite",
-        title: "I will meet them on-site",
-        description: "You or an agent will be present during the shoot."
-    },
-    {
-        value: "lockbox",
-        title: "Lockbox on property",
-        description: "Provide lockbox details and entry instructions below."
-    },
-    {
-        value: "remote-access",
-        title: "Agent will provide access remotely",
-        description: "Arrangements will be made before the shoot."
-    },
-    {
-        value: "other",
-        title: "Other",
-        description: "Share the access plan and any special notes below."
-    }
-];
-
 const portfolioHoverLabel = "Veramendi Model Home in New Braunfels, TX";
 
 function encodeFormData(data) {
@@ -79,8 +26,6 @@ function encodeFormData(data) {
 
 function App() {
     const [activeFilter, setActiveFilter] = useState("all");
-    const [bookingStep, setBookingStep] = useState(1);
-    const [bookingForm, setBookingForm] = useState(initialBookingForm);
     const [contactForm, setContactForm] = useState({
         name: "",
         email: "",
@@ -88,24 +33,12 @@ function App() {
         message: ""
     });
     const bookingSectionRef = useRef(null);
+    const bookingEmbedRef = useRef(null);
 
     const filteredPortfolio = useMemo(() => {
         if (activeFilter === "all") return portfolioItems;
         return portfolioItems.filter((item) => item.category === activeFilter);
     }, [activeFilter]);
-
-    const selectedPackagePricing = useMemo(() => {
-        const selectedPackageName = packagePricingById[bookingForm.package];
-        return pricingData.packages.find((pkg) => pkg.name === selectedPackageName) ?? null;
-    }, [bookingForm.package]);
-
-    const handleBookingChange = (event) => {
-        const { name, value } = event.target;
-        setBookingForm((prev) => ({
-            ...prev,
-            [name]: value
-        }));
-    };
 
     const handleContactChange = (event) => {
         const { name, value } = event.target;
@@ -113,49 +46,6 @@ function App() {
             ...prev,
             [name]: value
         }));
-    };
-
-    const scrollBookingSectionIntoView = () => {
-        window.requestAnimationFrame(() => {
-            bookingSectionRef.current?.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-        });
-    };
-
-    const nextBookingStep = () => {
-        setBookingStep((prev) => Math.min(prev + 1, 3));
-        scrollBookingSectionIntoView();
-    };
-
-    const prevBookingStep = () => {
-        setBookingStep((prev) => Math.max(prev - 1, 1));
-        scrollBookingSectionIntoView();
-    };
-
-    const handleBookingSubmit = async (event) => {
-        event.preventDefault();
-
-        try {
-            await fetch("/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: encodeFormData({
-                    "form-name": "booking",
-                    "bot-field": "",
-                    ...bookingForm
-                })
-            });
-
-            alert("Thanks! Your booking request was submitted successfully.");
-            setBookingForm(initialBookingForm);
-            setBookingStep(1);
-        } catch (error) {
-            alert("Something went wrong while submitting your booking. Please try again.");
-        }
     };
 
     const handleContactSubmit = async (event) => {
@@ -185,6 +75,26 @@ function App() {
             alert("Something went wrong while sending your message. Please try again.");
         }
     };
+
+    useEffect(() => {
+        const embedContainer = bookingEmbedRef.current;
+
+        if (!embedContainer) {
+            return undefined;
+        }
+
+        embedContainer.innerHTML = "";
+
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "https://form.jotform.com/jsform/260996807429069";
+        script.async = true;
+        embedContainer.appendChild(script);
+
+        return () => {
+            embedContainer.innerHTML = "";
+        };
+    }, []);
 
     return (
         <div className="site-shell">
@@ -353,11 +263,12 @@ function App() {
                         </p>
                     </div>
 
-                    <div className="container pricing-promo-wrap">
-                        <div className="pricing-promo">
-                            <div className="promo-title">🎉 {pricingData.promo.eyebrow}</div>
-                            <div className="promo-text">{pricingData.promo.text}</div>
-                            <div className="promo-subtext">{pricingData.promo.subtext}</div>
+                    <div className="container">
+                        <div className="pricing-promo-banner" role="note" aria-label="New customer promotion">
+                            <span className="pricing-promo-eyebrow">Limited-Time Offer</span>
+                            <p>
+                                First-time customers get 50% off their first shoot — use code <strong><u>NEW50</u></strong>.
+                            </p>
                         </div>
                     </div>
 
@@ -373,9 +284,7 @@ function App() {
                                     className={`pricing-card ${pkg.featured ? "featured" : ""}`}
                                 >
                                     <h4>{pkg.name}</h4>
-                                    <div className="old-price">{pkg.oldPrice}</div>
                                     <div className="current-price">{pkg.price}</div>
-                                    <div className="save-badge">{pkg.badge}</div>
 
                                     <ul className="pricing-features">
                                         {pkg.features.map((feature) => (
@@ -411,400 +320,13 @@ function App() {
                 <section id="booking" className="section section-light" ref={bookingSectionRef}>
                     <div className="container narrow-header">
                         <h2>Book Your Shoot</h2>
-                        <p>Schedule your real estate shoot in three simple steps.</p>
+                        <p>Use the booking form below to submit your shoot request.</p>
                     </div>
 
                     <div className="container">
-                        <div className="booking-progress">
-                            {bookingSteps.map((step, index) => (
-                                <div key={step.number} className="booking-progress-item">
-                                    <div className={`booking-step-circle ${bookingStep === step.number ? "active" : ""}`}>
-                                        {step.number}
-                                    </div>
-                                    <div className="booking-step-label">{step.label}</div>
-                                    {index < bookingSteps.length - 1 && <div className="booking-step-line" />}
-                                </div>
-                            ))}
+                        <div className="booking-card booking-embed-shell">
+                            <div ref={bookingEmbedRef} className="booking-embed" aria-label="Booking form" />
                         </div>
-
-                        <form
-                            className="booking-card"
-                            name="booking"
-                            method="POST"
-                            data-netlify="true"
-                            data-netlify-honeypot="bot-field"
-                            onSubmit={handleBookingSubmit}
-                        >
-                            <input type="hidden" name="form-name" value="booking" />
-                            <input type="hidden" name="bot-field" />
-                            {bookingStep === 1 && (
-                                <div className="booking-panel">
-                                    <div className="panel-heading">
-                                        <h3>Property Information</h3>
-                                    </div>
-
-                                    <label className="field">
-                                        <span>Street Address *</span>
-                                        <input
-                                            type="text"
-                                            name="streetAddress"
-                                            value={bookingForm.streetAddress}
-                                            onChange={handleBookingChange}
-                                            placeholder="123 Main Street"
-                                            required
-                                        />
-                                    </label>
-
-                                    <div className="three-col">
-                                        <label className="field">
-                                            <span>City *</span>
-                                            <input
-                                                type="text"
-                                                name="city"
-                                                value={bookingForm.city}
-                                                onChange={handleBookingChange}
-                                                placeholder="San Antonio"
-                                                required
-                                            />
-                                        </label>
-
-                                        <label className="field">
-                                            <span>State *</span>
-                                            <input
-                                                type="text"
-                                                name="state"
-                                                value={bookingForm.state}
-                                                onChange={handleBookingChange}
-                                                placeholder="TX"
-                                                required
-                                            />
-                                        </label>
-
-                                        <label className="field">
-                                            <span>Zip Code *</span>
-                                            <input
-                                                type="text"
-                                                name="zipCode"
-                                                value={bookingForm.zipCode}
-                                                onChange={handleBookingChange}
-                                                placeholder="78201"
-                                                required
-                                            />
-                                        </label>
-                                    </div>
-
-                                    <label className="field">
-                                        <span>Square Footage</span>
-                                        <input
-                                            type="text"
-                                            name="squareFootage"
-                                            value={bookingForm.squareFootage}
-                                            onChange={handleBookingChange}
-                                            placeholder="2,500"
-                                        />
-                                    </label>
-
-                                    <div className="two-col">
-                                        <label className="field">
-                                            <span>Bedrooms</span>
-                                            <select
-                                                name="bedrooms"
-                                                value={bookingForm.bedrooms}
-                                                onChange={handleBookingChange}
-                                            >
-                                                <option value="">Select</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5+">5+</option>
-                                            </select>
-                                        </label>
-
-                                        <label className="field">
-                                            <span>Bathrooms</span>
-                                            <select
-                                                name="bathrooms"
-                                                value={bookingForm.bathrooms}
-                                                onChange={handleBookingChange}
-                                            >
-                                                <option value="">Select</option>
-                                                <option value="1">1</option>
-                                                <option value="1.5">1.5</option>
-                                                <option value="2">2</option>
-                                                <option value="2.5">2.5</option>
-                                                <option value="3+">3+</option>
-                                            </select>
-                                        </label>
-                                    </div>
-
-                                    <fieldset className="field-group">
-                                        <legend>Is the property currently occupied?</legend>
-                                        <label className="radio-option">
-                                            <input
-                                                type="radio"
-                                                name="occupancy"
-                                                value="vacant"
-                                                checked={bookingForm.occupancy === "vacant"}
-                                                onChange={handleBookingChange}
-                                            />
-                                            <span>Vacant</span>
-                                        </label>
-                                        <label className="radio-option">
-                                            <input
-                                                type="radio"
-                                                name="occupancy"
-                                                value="owner occupied"
-                                                checked={bookingForm.occupancy === "owner occupied"}
-                                                onChange={handleBookingChange}
-                                            />
-                                            <span>Owner occupied</span>
-                                        </label>
-                                        <label className="radio-option">
-                                            <input
-                                                type="radio"
-                                                name="occupancy"
-                                                value="tenant occupied"
-                                                checked={bookingForm.occupancy === "tenant occupied"}
-                                                onChange={handleBookingChange}
-                                            />
-                                            <span>Tenant occupied</span>
-                                        </label>
-                                    </fieldset>
-
-                                    <fieldset className="field-group">
-                                        <legend>Photography Package *</legend>
-                                        <div className="package-options">
-                                            {bookingPackages.map((pkg) => (
-                                                <label key={pkg.id} className="package-option">
-                                                    <input
-                                                        type="radio"
-                                                        name="package"
-                                                        value={pkg.id}
-                                                        checked={bookingForm.package === pkg.id}
-                                                        onChange={handleBookingChange}
-                                                    />
-                                                    <span>{pkg.title}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-
-                                        {selectedPackagePricing && (
-                                            <div className="package-price-preview" aria-live="polite">
-                                                <div className="package-price-copy">
-                                                    <p className="package-price-label">Original Price:</p>
-                                                    <p className="package-sale-label">
-                                                        {pricingData.promo.eyebrow} Price:
-                                                    </p>
-                                                    <p className="package-price-deadline">
-                                                        {pricingData.promo.subtext}
-                                                    </p>
-                                                </div>
-
-                                                <div className="package-price-values">
-                                                    <p className="package-old-price">
-                                                        {selectedPackagePricing.oldPrice}
-                                                    </p>
-                                                    <p className="package-sale-price">
-                                                        {selectedPackagePricing.price}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </fieldset>
-                                </div>
-                            )}
-
-                            {bookingStep === 2 && (
-                                <div className="booking-panel">
-                                    <div className="panel-heading schedule-panel-heading">
-                                        <div className="schedule-heading-mark" aria-hidden="true">
-                                            02
-                                        </div>
-                                        <div>
-                                            <h3>Schedule Your Shoot</h3>
-                                            <p className="panel-subcopy">
-                                                Typical shoots take 30-60 minutes depending on property size.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="two-col schedule-grid">
-                                        <label className="field">
-                                            <span>Preferred Date *</span>
-                                            <input
-                                                type="date"
-                                                name="preferredDate"
-                                                value={bookingForm.preferredDate}
-                                                onChange={handleBookingChange}
-                                                required
-                                            />
-                                        </label>
-
-                                        <label className="field">
-                                            <span>Preferred Time *</span>
-                                            <select
-                                                name="preferredTime"
-                                                value={bookingForm.preferredTime}
-                                                onChange={handleBookingChange}
-                                                required
-                                            >
-                                                <option value="">Select a time</option>
-                                                <option value="morning">Morning (8-11 AM)</option>
-                                                <option value="midday">Midday (11 AM-2 PM)</option>
-                                                <option value="afternoon">Afternoon (2-5 PM)</option>
-                                                <option value="twilight">Twilight (6-7 PM)</option>
-                                            </select>
-                                        </label>
-
-                                        <label className="field">
-                                            <span>Alternate Date</span>
-                                            <input
-                                                type="date"
-                                                name="alternateDate"
-                                                value={bookingForm.alternateDate}
-                                                onChange={handleBookingChange}
-                                            />
-                                        </label>
-
-                                        <label className="field">
-                                            <span>Alternate Time</span>
-                                            <select
-                                                name="alternateTime"
-                                                value={bookingForm.alternateTime}
-                                                onChange={handleBookingChange}
-                                            >
-                                                <option value="">Select a time</option>
-                                                <option value="morning">Morning (8-11 AM)</option>
-                                                <option value="midday">Midday (11 AM-2 PM)</option>
-                                                <option value="afternoon">Afternoon (2-5 PM)</option>
-                                                <option value="twilight">Twilight (6-7 PM)</option>
-                                            </select>
-                                        </label>
-                                    </div>
-
-                                    <div className="booking-divider" />
-
-                                    <label className="field">
-                                        <span>Project Notes</span>
-                                        <textarea
-                                            name="notes"
-                                            value={bookingForm.notes}
-                                            onChange={handleBookingChange}
-                                            rows="6"
-                                            placeholder="Anything you want Alyssa to know about the property, seller prep, gate codes, special shots, or listing timeline..."
-                                        />
-                                    </label>
-                                </div>
-                            )}
-
-                            {bookingStep === 3 && (
-                                <div className="booking-panel">
-                                    <div className="panel-heading schedule-panel-heading">
-                                        <div className="schedule-heading-mark" aria-hidden="true">
-                                            03
-                                        </div>
-                                        <div>
-                                            <h3>Contact &amp; Property Access</h3>
-                                            <p className="panel-subcopy">
-                                                Share the best contact info and how Alyssa should access the property.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <label className="field">
-                                        <span>Full Name *</span>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            value={bookingForm.name}
-                                            onChange={handleBookingChange}
-                                            placeholder="John Doe"
-                                            required
-                                        />
-                                    </label>
-
-                                    <div className="two-col">
-                                        <label className="field">
-                                            <span>Email *</span>
-                                            <input
-                                                type="email"
-                                                name="email"
-                                                value={bookingForm.email}
-                                                onChange={handleBookingChange}
-                                                placeholder="john@example.com"
-                                                required
-                                            />
-                                        </label>
-
-                                        <label className="field">
-                                            <span>Phone</span>
-                                            <input
-                                                type="tel"
-                                                name="phone"
-                                                value={bookingForm.phone}
-                                                onChange={handleBookingChange}
-                                                placeholder="(555) 123-4567"
-                                            />
-                                        </label>
-                                    </div>
-
-                                    <fieldset className="field-group">
-                                        <legend>Property Access Type *</legend>
-                                        <div className="access-type-options">
-                                            {accessTypeOptions.map((option) => (
-                                                <label key={option.value} className="access-type-option">
-                                                    <input
-                                                        type="radio"
-                                                        name="accessType"
-                                                        value={option.value}
-                                                        checked={bookingForm.accessType === option.value}
-                                                        onChange={handleBookingChange}
-                                                    />
-                                                    <span className="access-type-copy">
-                                                        <span className="access-type-title">{option.title}</span>
-                                                        <span className="access-type-description">
-                                                            {option.description}
-                                                        </span>
-                                                    </span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </fieldset>
-
-                                    <label className="field">
-                                        <span>Notes &amp; Special Instructions</span>
-                                        <textarea
-                                            name="accessDetails"
-                                            value={bookingForm.accessDetails}
-                                            onChange={handleBookingChange}
-                                            rows="6"
-                                            placeholder="Parking instructions, alarm codes, pets on property, lockbox details, gate codes, occupant notes, or anything else Alyssa should know before arrival."
-                                        />
-                                    </label>
-                                </div>
-                            )}
-
-                            <div className="booking-actions">
-                                <button
-                                    type="button"
-                                    className={`btn btn-ghost ${bookingStep === 1 ? "hidden" : ""}`}
-                                    onClick={prevBookingStep}
-                                >
-                                    Back
-                                </button>
-
-                                {bookingStep < 3 ? (
-                                    <button type="button" className="btn btn-primary" onClick={nextBookingStep}>
-                                        Next
-                                    </button>
-                                ) : (
-                                    <button type="submit" className="btn btn-primary">
-                                        Submit Booking
-                                    </button>
-                                )}
-                            </div>
-                        </form>
                     </div>
                 </section>
 

@@ -163,17 +163,10 @@ export const serviceAreaGroups = [
 ];
 
 export const pricingData = {
-    promo: {
-        eyebrow: "50% Off Spring Special!",
-        text: "Book now and save 50% on all photography packages",
-        subtext: "Promotion ends April 30, 2026"
-    },
     packages: [
         {
             name: "Basic Listing",
-            oldPrice: "$150",
-            price: "$75",
-            badge: "Save 50%",
+            price: "$150",
             featured: false,
             description: "Best for small homes and rental listings.",
             features: [
@@ -187,9 +180,7 @@ export const pricingData = {
         },
         {
             name: "Standard Listing",
-            oldPrice: "$185",
-            price: "$93",
-            badge: "Save 50%",
+            price: "$185",
             featured: true,
             description: "Perfect for most residential listings.",
             features: [
@@ -203,9 +194,7 @@ export const pricingData = {
         },
         {
             name: "Premium Listing",
-            oldPrice: "$225",
-            price: "$113",
-            badge: "Save 50%",
+            price: "$225",
             featured: false,
             description: "Ideal for large homes and luxury listings.",
             features: [
