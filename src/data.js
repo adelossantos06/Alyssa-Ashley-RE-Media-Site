@@ -37,18 +37,18 @@ export const services = [
         title: "Floor Plans",
         description:
             "Detailed floor plans that help buyers understand the property layout and flow.",
-        comingSoon: true
-    },
-    {
-        title: "Video Tours",
-        description:
-            "Walkthrough-style video coverage that helps listings feel more immersive and engaging.",
-        comingSoon: true
+        comingSoon: false
     },
     {
         title: "Virtual Staging",
         description:
             "Digital furniture and decor placement to help buyers visualize the space.",
+        comingSoon: false
+    },
+    {
+        title: "Video Tours",
+        description:
+            "Walkthrough-style video coverage that helps listings feel more immersive and engaging.",
         comingSoon: true
     },
     {

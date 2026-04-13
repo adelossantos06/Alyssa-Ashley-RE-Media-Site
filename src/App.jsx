@@ -324,6 +324,15 @@ function App() {
                     </div>
 
                     <div className="container">
+                        <div className="pricing-promo-banner" role="note" aria-label="New customer promotion">
+                            <span className="pricing-promo-eyebrow">Limited-Time Offer</span>
+                            <p>
+                                First-time customers get 50% off their first shoot — use code <strong><u>NEW50</u></strong>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="container">
                         <div className="booking-card booking-embed-shell">
                             <div ref={bookingEmbedRef} className="booking-embed" aria-label="Booking form" />
                         </div>
