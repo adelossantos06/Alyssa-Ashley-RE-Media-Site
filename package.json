@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "sync:portfolio": "node scripts/sync-portfolio.mjs",
+    "predev": "npm run sync:portfolio",
+    "prebuild": "npm run sync:portfolio",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

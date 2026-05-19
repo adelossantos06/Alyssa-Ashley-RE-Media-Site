@@ -1,3 +1,5 @@
+import { portfolioImageFiles } from "./portfolioImages";
+
 export const navLinks = [
     { label: "Home", href: "#home" },
     { label: "Portfolio", href: "#portfolio" },
@@ -40,9 +42,9 @@ export const services = [
         comingSoon: false
     },
     {
-        title: "Virtual Staging",
+        title: "Virtual Staging & Twilight",
         description:
-            "Digital furniture and decor placement to help buyers visualize the space.",
+            "Digital furniture placement and twilight edits that help buyers visualize a home's potential and curb appeal.",
         comingSoon: false
     },
     {
@@ -59,56 +61,250 @@ export const services = [
     }
 ];
 
-export const portfolioItems = [
-    {
-        title: "Modern Exterior",
-        category: "exterior",
-        image: "/images/portfolio-exterior-1.jpg",
-        alt: "Front exterior of a modern home"
-    },
-    {
-        title: "Bright Kitchen",
-        category: "interior",
-        image: "/images/portfolio-interior-1.jpg",
-        alt: "Bright white kitchen interior"
-    },
-    {
-        title: "Living Room",
-        category: "interior",
-        image: "/images/portfolio-interior-2.jpg",
-        alt: "Wide living room interior"
-    },
-    {
-        title: "Bedroom",
-        category: "interior",
-        image: "/images/portfolio-interior-3.jpg",
-        alt: "Primary bedroom interior"
-    },
-    {
-        title: "Bathroom Tub",
-        category: "interior",
-        image: "/images/portfolio-interior-4.jpg",
-        alt: "Bathroom with freestanding tub"
-    },
-    {
-        title: "Bathroom Vanity",
-        category: "interior",
-        image: "/images/portfolio-interior-5.jpg",
-        alt: "Bathroom vanity and shower"
-    },
-    {
-        title: "Dining Area",
-        category: "interior",
-        image: "/images/portfolio-interior-6.jpg",
-        alt: "Dining area with large windows"
-    },
-    {
-        title: "Patio",
-        category: "exterior",
-        image: "/images/portfolio-exterior-2.jpg",
-        alt: "Outdoor patio seating area"
+const portfolioCategories = {
+    E: { category: "exterior", label: "Exterior" },
+    I: { category: "interior", label: "Interior" },
+    VT: { category: "virtual", label: "Virtual Twilight" },
+    VS: { category: "virtual", label: "Virtual Staging" }
+};
+
+const comparisonStateMap = {
+    1: "before",
+    2: "after",
+    before: "before",
+    after: "after"
+};
+
+const sectionOrder = {
+    exterior: 0,
+    interior: 0,
+    virtual: 1
+};
+
+const virtualTypeOrder = {
+    VT: 0,
+    VS: 1
+};
+
+const coverFileNames = new Set(["cover", "thumbnail"]);
+
+const projectDisplayNameOverrides = {
+    "sulpher sprgs": "sulpher springs"
+};
+
+function toTitleCase(value) {
+    return value
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(" ")
+        .filter(Boolean)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+
+function getProjectDisplayName(projectAddress) {
+    const streetName = projectAddress.replace(/^\d+\s+/, "");
+    return projectDisplayNameOverrides[streetName] ?? streetName;
+}
+
+function comparePortfolioItems(firstItem, secondItem) {
+    if (firstItem.sectionOrder === sectionOrder.virtual && secondItem.sectionOrder === sectionOrder.virtual) {
+        return (
+            firstItem.virtualTypeOrder - secondItem.virtualTypeOrder ||
+            firstItem.projectAddress.localeCompare(secondItem.projectAddress, undefined, { numeric: true, sensitivity: "base" }) ||
+            firstItem.photoOrder - secondItem.photoOrder ||
+            firstItem.title.localeCompare(secondItem.title, undefined, { numeric: true, sensitivity: "base" })
+        );
     }
-];
+
+    return (
+        firstItem.sectionOrder - secondItem.sectionOrder ||
+        firstItem.projectAddress.localeCompare(secondItem.projectAddress, undefined, { numeric: true, sensitivity: "base" }) ||
+        firstItem.photoOrder - secondItem.photoOrder ||
+        firstItem.virtualTypeOrder - secondItem.virtualTypeOrder ||
+        firstItem.category.localeCompare(secondItem.category, undefined, { numeric: true, sensitivity: "base" }) ||
+        firstItem.title.localeCompare(secondItem.title, undefined, { numeric: true, sensitivity: "base" })
+    );
+}
+
+function parseStandardPortfolioImage(parts, category) {
+    const order = Number(parts.at(-1)) || 0;
+    const projectAddress = parts.slice(1, -1).join(" ").toLowerCase() || "portfolio";
+    const title = toTitleCase(`${projectAddress} ${order}`);
+
+    return {
+        title,
+        projectAddress,
+        state: null,
+        pairKey: null,
+        photoOrder: order,
+        sectionOrder: sectionOrder[category.category]
+    };
+}
+
+function parseProjectPortfolioImage(fileName) {
+    const [projectFolder, imageFileName] = fileName.split("/");
+    const nameWithoutExtension = imageFileName.replace(/\.[^.]+$/, "");
+    const isCover = coverFileNames.has(nameWithoutExtension.toLowerCase());
+    const parts = nameWithoutExtension
+        .split("-")
+        .map((part) => part.trim())
+        .filter(Boolean);
+    const order = isCover ? 0 : Number(parts.at(-1)) || 0;
+    const projectAddress = isCover
+        ? projectFolder.toLowerCase()
+        : parts.slice(0, -1).join(" ").toLowerCase() || projectFolder.toLowerCase();
+    const title = toTitleCase(`${projectAddress} ${order}`);
+
+    return {
+        id: fileName,
+        fileName,
+        title,
+        category: "project",
+        categoryLabel: "Project",
+        image: `/images/portfolio/${fileName}`,
+        alt: `Real estate photo of ${title.toLowerCase()}`,
+        state: null,
+        pairKey: null,
+        projectAddress,
+        projectFolder: projectFolder.toLowerCase(),
+        sectionOrder: 0,
+        photoOrder: order,
+        virtualTypeOrder: 0,
+        isCover
+    };
+}
+
+function parseVirtualPortfolioImage(parts, categoryCode, category) {
+    const ending = parts.at(-1)?.toLowerCase();
+    const state = comparisonStateMap[ending] ?? null;
+    const secondPartIsOrder = /^\d+$/.test(parts[1]);
+    const secondToLastPartIsOrder = /^\d+$/.test(parts.at(-2));
+    let addressParts = [];
+    let photoOrder = 0;
+
+    if (secondPartIsOrder) {
+        photoOrder = Number(parts[1]) || 0;
+        addressParts = state ? parts.slice(2, -1) : parts.slice(2);
+    } else if (secondToLastPartIsOrder) {
+        photoOrder = Number(parts.at(-2)) || 0;
+        addressParts = state ? parts.slice(1, -2) : parts.slice(1, -1);
+    } else {
+        photoOrder = 1;
+        addressParts = state ? parts.slice(1, -1) : parts.slice(1);
+    }
+
+    const projectAddress = addressParts.join(" ").toLowerCase() || "portfolio";
+    const title = toTitleCase(`${category.label} ${projectAddress} ${photoOrder}`);
+
+    return {
+        title,
+        projectAddress,
+        state,
+        pairKey: [categoryCode, projectAddress, photoOrder].join("-"),
+        photoOrder,
+        sectionOrder: sectionOrder[category.category],
+        virtualTypeOrder: virtualTypeOrder[categoryCode] ?? 0
+    };
+}
+
+function parsePortfolioImage(fileName) {
+    if (fileName.includes("/")) {
+        return parseProjectPortfolioImage(fileName);
+    }
+
+    const nameWithoutExtension = fileName.replace(/\.[^.]+$/, "");
+    const parts = nameWithoutExtension
+        .split("-")
+        .map((part) => part.trim())
+        .filter(Boolean);
+    const categoryCode = parts[0]?.toUpperCase();
+    const category = portfolioCategories[categoryCode] ?? portfolioCategories.I;
+    const parsedDetails = category.category === "virtual"
+        ? parseVirtualPortfolioImage(parts, categoryCode, category)
+        : parseStandardPortfolioImage(parts, category);
+
+    return {
+        id: fileName,
+        fileName,
+        title: parsedDetails.title,
+        category: category.category,
+        categoryLabel: category.label,
+        image: `/images/portfolio/${fileName}`,
+        alt: `${category.label} real estate photo of ${parsedDetails.title.toLowerCase()}`,
+        state: parsedDetails.state,
+        pairKey: parsedDetails.pairKey,
+        projectAddress: parsedDetails.projectAddress,
+        projectFolder: parsedDetails.projectFolder,
+        sectionOrder: parsedDetails.sectionOrder,
+        photoOrder: parsedDetails.photoOrder,
+        virtualTypeOrder: parsedDetails.virtualTypeOrder ?? 0
+    };
+}
+
+function buildPortfolioItems(parsedImages) {
+    const groupedImages = parsedImages.filter((image) => !image.isCover).reduce((groups, image) => {
+        if (!image.state) {
+            return groups;
+        }
+
+        const existingGroup = groups.get(image.pairKey) ?? [];
+        groups.set(image.pairKey, [...existingGroup, image]);
+        return groups;
+    }, new Map());
+    const pairedKeys = new Set();
+
+    const comparisonItems = [...groupedImages.values()]
+        .filter((group) => group.some((image) => image.state === "before") && group.some((image) => image.state === "after"))
+        .map((group) => {
+            const before = group.find((image) => image.state === "before");
+            const after = group.find((image) => image.state === "after");
+            pairedKeys.add(before.pairKey);
+
+            return {
+                id: before.pairKey,
+                title: before.title,
+                category: before.category,
+                categoryLabel: before.categoryLabel,
+                alt: before.alt,
+                comparison: true,
+                beforeImage: before.image,
+                afterImage: after.image,
+                projectAddress: before.projectAddress,
+                projectFolder: before.projectFolder,
+                sectionOrder: before.sectionOrder,
+                photoOrder: before.photoOrder,
+                virtualTypeOrder: before.virtualTypeOrder
+            };
+        });
+
+    const singleItems = parsedImages
+        .filter((image) => !image.isCover)
+        .filter((image) => !pairedKeys.has(image.pairKey))
+        .map(({ state, pairKey, fileName, ...image }) => image);
+
+    return [...comparisonItems, ...singleItems].sort(comparePortfolioItems);
+}
+
+const parsedPortfolioImages = portfolioImageFiles.map(parsePortfolioImage);
+
+export const portfolioItems = buildPortfolioItems(parsedPortfolioImages);
+
+export const portfolioProjects = [...new Set(
+    portfolioItems
+        .filter((item) => item.category !== "virtual")
+        .map((item) => item.projectAddress)
+)].map((projectAddress) => ({
+    id: projectAddress,
+    label: toTitleCase(getProjectDisplayName(projectAddress)),
+    thumbnail: parsedPortfolioImages.find((image) => (
+        image.isCover &&
+        portfolioItems.some((item) => (
+            item.projectAddress === projectAddress &&
+            item.projectFolder === image.projectFolder
+        ))
+    ))?.image
+}));
 
 export const aboutData = {
     heading: "About Me",
@@ -265,6 +461,26 @@ export const contactDetails = {
 export const footerData = {
     description:
         "Professional real estate photography in Selma, New Braunfels, San Antonio, and surrounding areas that helps listings stand out.",
+    socialLinks: [
+        {
+            label: "Google Business",
+            href: "https://share.google/t1ljeTYaWN1AIvtZN",
+            logoUrl: "/images/google-business-logo.svg",
+            shortLabel: "G"
+        },
+        {
+            label: "Facebook",
+            href: "https://www.facebook.com/AlyssaAshleyMedia",
+            logoUrl: "/images/facebook-logo.svg",
+            shortLabel: "FB"
+        },
+        {
+            label: "Instagram",
+            href: "https://www.instagram.com/alyssaashleymedia/?hl=en",
+            logoUrl: "/images/instagram-logo.svg",
+            shortLabel: "IG"
+        }
+    ],
     quickLinks: ["Home", "Portfolio", "Services", "About", "Contact"],
     services: [
         "Interior Photography",
