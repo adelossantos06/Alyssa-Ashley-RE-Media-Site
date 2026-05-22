@@ -4,6 +4,7 @@ export const navLinks = [
     { label: "Home", href: "#home" },
     { label: "Portfolio", href: "#portfolio" },
     { label: "Services", href: "#services" },
+    { label: "Pricing", href: "#pricing" },
     { label: "About", href: "#about" },
     { label: "Contact", href: "#contact" }
 ];
@@ -401,6 +402,26 @@ export const pricingData = {
                 "MLS-ready images",
                 "24–48 hour delivery"
             ]
+        }
+    ],
+    addOns: [
+        {
+            name: "Floor Plan",
+            price: "$35",
+            unit: "",
+            description: "Professional 2D floor plan with accurate measurements and room labels"
+        },
+        {
+            name: "Virtual Staging",
+            price: "$20",
+            unit: "per photo",
+            description: "Digitally furnish empty spaces to help buyers visualize potential"
+        },
+        {
+            name: "Virtual Twilight",
+            price: "$20",
+            unit: "per photo",
+            description: "Stunning dusk edits that showcase your property's evening appeal"
         }
     ]
 };

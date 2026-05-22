@@ -551,7 +551,7 @@ function App() {
                     </div>
                 </section>
 
-                <section className="section section-light">
+                <section id="pricing" className="section section-light">
                     <div className="container narrow-header">
                         <h2>Pricing</h2>
                         <p>
@@ -590,6 +590,24 @@ function App() {
                                     </ul>
 
                                     <p className="pricing-description">{pkg.description}</p>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="container add-on-section">
+                        <div className="narrow-header">
+                            <h3>Add-On Services</h3>
+                            <p>Enhance your listing with these additional services</p>
+                        </div>
+
+                        <div className="add-on-grid">
+                            {pricingData.addOns.map((addOn) => (
+                                <article key={addOn.name} className="add-on-card">
+                                    <h4>{addOn.name}</h4>
+                                    <div className="add-on-price">{addOn.price}</div>
+                                    {addOn.unit && <p className="add-on-unit">{addOn.unit}</p>}
+                                    <p className="add-on-description">{addOn.description}</p>
                                 </article>
                             ))}
                         </div>

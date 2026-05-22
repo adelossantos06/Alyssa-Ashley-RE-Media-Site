@@ -624,6 +624,7 @@ button {
 .service-card,
 .area-card,
 .pricing-card,
+.add-on-card,
 .booking-card,
 .contact-form,
 .contact-info,
@@ -836,6 +837,49 @@ button {
     margin: 0;
     color: var(--text-soft);
     font-style: italic;
+}
+
+.add-on-section {
+    margin-top: 64px;
+}
+
+.add-on-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.add-on-card {
+    padding: 32px 28px 26px;
+    text-align: center;
+    border: 2px solid var(--accent);
+}
+
+.add-on-card h4 {
+    margin: 0 0 14px;
+    color: var(--heading);
+    font-size: 2rem;
+    line-height: 1.15;
+}
+
+.add-on-price {
+    margin-bottom: 12px;
+    color: var(--accent);
+    font-size: 3rem;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.add-on-unit,
+.add-on-description {
+    margin: 0;
+    color: var(--text-soft);
+    line-height: 1.5;
+}
+
+.add-on-unit {
+    margin-bottom: 20px;
+    font-weight: 700;
 }
 
 .steps-grid {
@@ -1378,6 +1422,7 @@ textarea {
 
     .service-grid,
     .pricing-grid,
+    .add-on-grid,
     .area-grid,
     .steps-grid,
     .two-col,
