@@ -5,6 +5,7 @@ import {
     services,
     portfolioItems,
     portfolioProjects,
+    heroImages,
     aboutData,
     serviceAreaGroups,
     pricingData,
@@ -23,6 +24,17 @@ function formatProjectLabel(value) {
         .filter(Boolean)
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
+}
+
+function getShuffledHeroImages(images) {
+    const shuffledImages = [...images];
+
+    for (let index = shuffledImages.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [shuffledImages[index], shuffledImages[swapIndex]] = [shuffledImages[swapIndex], shuffledImages[index]];
+    }
+
+    return shuffledImages.slice(0, 12);
 }
 
 function BeforeAfterViewer({ beforeImage, afterImage, alt, value }) {
@@ -60,6 +72,15 @@ function PortfolioGallery({ items, activeIndex, onActiveIndexChange }) {
         onActiveIndexChange(activeIndex === items.length - 1 ? 0 : activeIndex + 1);
     };
 
+    const handleFeatureKeyDown = (event) => {
+        if (!hasMultipleItems || !["Enter", " "].includes(event.key)) {
+            return;
+        }
+
+        event.preventDefault();
+        showNextImage();
+    };
+
     if (!activeItem) {
         return (
             <div className="portfolio-empty">
@@ -82,7 +103,14 @@ function PortfolioGallery({ items, activeIndex, onActiveIndexChange }) {
                     </button>
                 )}
 
-                <figure className="portfolio-feature">
+                <figure
+                    className={`portfolio-feature ${hasMultipleItems ? "clickable" : ""}`}
+                    role={hasMultipleItems ? "button" : undefined}
+                    tabIndex={hasMultipleItems ? 0 : undefined}
+                    aria-label={hasMultipleItems ? "Show next portfolio image" : undefined}
+                    onClick={hasMultipleItems ? showNextImage : undefined}
+                    onKeyDown={handleFeatureKeyDown}
+                >
                     {activeItem.comparison ? (
                         <BeforeAfterViewer
                             beforeImage={activeItem.beforeImage}
@@ -149,24 +177,62 @@ function PortfolioGallery({ items, activeIndex, onActiveIndexChange }) {
 }
 
 function PortfolioProjectGrid({ projects, onSelectProject }) {
+    const [previewIndexes, setPreviewIndexes] = useState({});
+
+    const changePreviewImage = (event, project, direction) => {
+        event.stopPropagation();
+        const currentIndex = previewIndexes[project.id] ?? 0;
+        const nextIndex = (currentIndex + direction + project.items.length) % project.items.length;
+
+        setPreviewIndexes((currentIndexes) => ({
+            ...currentIndexes,
+            [project.id]: nextIndex
+        }));
+    };
+
     return (
         <div className="portfolio-project-grid">
-            {projects.map((project) => (
-                <button
-                    key={project.id}
-                    type="button"
-                    className="portfolio-project-card"
-                    aria-label={`View ${project.label} portfolio collection`}
-                    onClick={() => onSelectProject(project.id)}
-                >
-                    <img src={project.thumbnail} alt="" />
-                    <span className="portfolio-project-title">{project.label}</span>
-                    <span className="portfolio-project-meta">
-                        <span aria-hidden="true" />
-                        {project.count} {project.count === 1 ? "item" : "items"}
-                    </span>
-                </button>
-            ))}
+            {projects.map((project) => {
+                const previewIndex = previewIndexes[project.id] ?? 0;
+                const previewImage = project.items[previewIndex]?.image ?? project.thumbnail;
+                const hasMultipleImages = project.items.length > 1;
+
+                return (
+                    <article
+                        key={project.id}
+                        className="portfolio-project-card"
+                    >
+                        <button
+                            type="button"
+                            className="portfolio-project-open"
+                            aria-label={`View ${project.label} portfolio collection`}
+                            onClick={() => onSelectProject(project.id)}
+                        >
+                            <img src={previewImage} alt="" />
+                        </button>
+                        {hasMultipleImages && (
+                            <>
+                                <button
+                                    className="project-preview-nav project-preview-nav-prev"
+                                    type="button"
+                                    aria-label={`Previous ${project.label} preview image`}
+                                    onClick={(event) => changePreviewImage(event, project, -1)}
+                                >
+                                    ‹
+                                </button>
+                                <button
+                                    className="project-preview-nav project-preview-nav-next"
+                                    type="button"
+                                    aria-label={`Next ${project.label} preview image`}
+                                    onClick={(event) => changePreviewImage(event, project, 1)}
+                                >
+                                    ›
+                                </button>
+                            </>
+                        )}
+                    </article>
+                );
+            })}
         </div>
     );
 }
@@ -187,7 +253,11 @@ function VirtualThumbnailGrid({ items, onSelectItem }) {
                         aria-label={`Open ${item.title} before and after comparison`}
                         onClick={() => onSelectItem(item.id)}
                     >
-                        <img src={item.afterImage} alt="" />
+                        <span className="portfolio-clickable-media">
+                            <img className="virtual-thumbnail-after" src={item.afterImage} alt="" />
+                            <img className="virtual-thumbnail-before" src={item.beforeImage} alt="" />
+                            <span className="portfolio-tap-cue">Compare</span>
+                        </span>
                     </button>
                 ))}
             </div>
@@ -245,6 +315,8 @@ function App() {
     const [activeTwilightIndex, setActiveTwilightIndex] = useState(null);
     const [activeStagingIndex, setActiveStagingIndex] = useState(null);
     const [selectedProject, setSelectedProject] = useState(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [heroImageIndex, setHeroImageIndex] = useState(0);
     const [contactForm, setContactForm] = useState({
         name: "",
         email: "",
@@ -253,6 +325,8 @@ function App() {
     });
     const bookingSectionRef = useRef(null);
     const bookingEmbedRef = useRef(null);
+    const heroSlideshowImages = useMemo(() => getShuffledHeroImages(heroImages), []);
+    const activeHeroImage = heroSlideshowImages[heroImageIndex] ?? "/images/hero-home.jpg";
 
     const standardPortfolioItems = useMemo(() => (
         portfolioItems.filter((item) => item.category !== "virtual")
@@ -278,6 +352,7 @@ function App() {
             return {
                 ...project,
                 count: projectItems.length,
+                items: projectItems,
                 thumbnail: project.thumbnail ?? thumbnailItem?.image
             };
         }).filter((project) => project.thumbnail)
@@ -300,6 +375,24 @@ function App() {
         setSelectedProject(null);
         setActivePortfolioIndex(0);
     };
+
+    const closeMobileMenu = () => {
+        setIsMobileMenuOpen(false);
+    };
+
+    useEffect(() => {
+        if (heroSlideshowImages.length <= 1) {
+            return undefined;
+        }
+
+        const intervalId = window.setInterval(() => {
+            setHeroImageIndex((currentIndex) => (currentIndex + 1) % heroSlideshowImages.length);
+        }, 5200);
+
+        return () => {
+            window.clearInterval(intervalId);
+        };
+    }, [heroSlideshowImages.length]);
 
     const handleContactChange = (event) => {
         const { name, value } = event.target;
@@ -369,13 +462,30 @@ function App() {
                         />
                     </a>
 
-                    <nav className="main-nav" aria-label="Main navigation">
+                    <button
+                        className="mobile-menu-toggle"
+                        type="button"
+                        aria-label="Toggle navigation menu"
+                        aria-expanded={isMobileMenuOpen}
+                        aria-controls="main-navigation"
+                        onClick={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
+                    >
+                        <span />
+                        <span />
+                        <span />
+                    </button>
+
+                    <nav
+                        id="main-navigation"
+                        className={`main-nav ${isMobileMenuOpen ? "open" : ""}`}
+                        aria-label="Main navigation"
+                    >
                         {navLinks.map((link) => (
-                            <a key={link.href} href={link.href} className="nav-link">
+                            <a key={link.href} href={link.href} className="nav-link" onClick={closeMobileMenu}>
                                 {link.label}
                             </a>
                         ))}
-                        <a href="#booking" className="btn btn-primary nav-cta">
+                        <a href="#booking" className="btn btn-primary nav-cta" onClick={closeMobileMenu}>
                             Book Now
                         </a>
                     </nav>
@@ -386,8 +496,9 @@ function App() {
                 <section id="home" className="hero-section">
                     <div className="hero-overlay" />
                     <img
+                        key={activeHeroImage}
                         className="hero-image"
-                        src="/images/hero-home.jpg"
+                        src={activeHeroImage}
                         alt="Luxury home exterior"
                     />
                     <div className="container hero-content">

@@ -171,6 +171,29 @@ button {
     margin-left: 4px;
 }
 
+.mobile-menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--heading);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.mobile-menu-toggle span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -253,6 +276,17 @@ button {
 .hero-image {
     object-fit: cover;
     z-index: 0;
+    animation: heroFade 1.3s ease;
+}
+
+@keyframes heroFade {
+    from {
+        opacity: 0.35;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .hero-overlay {
@@ -301,8 +335,8 @@ button {
 
 .portfolio-project-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 46px 38px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 38px 24px;
 }
 
 .portfolio-projects-section {
@@ -311,16 +345,32 @@ button {
 }
 
 .portfolio-project-card {
-    display: grid;
-    gap: 12px;
+    position: relative;
     padding: 0;
     border: 0;
     border-radius: 0;
     background: transparent;
-    text-align: left;
     color: var(--heading);
 }
 
+.portfolio-project-open {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    background: transparent;
+}
+
+.portfolio-clickable-media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+}
+
+.portfolio-project-open img,
+.portfolio-clickable-media img,
 .portfolio-project-card img {
     width: 100%;
     aspect-ratio: 4 / 3;
@@ -333,27 +383,63 @@ button {
     opacity: 0.86;
 }
 
+.project-preview-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.68);
+    color: #ffffff;
+    font-size: 1.65rem;
+    line-height: 1;
+    opacity: 0;
+    transform: translateY(-50%);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
+    transition: opacity 0.18s ease, background-color 0.18s ease;
+}
+
+.portfolio-project-card:hover .project-preview-nav,
+.portfolio-project-card:focus-within .project-preview-nav {
+    opacity: 1;
+}
+
+.project-preview-nav:hover {
+    background: rgba(17, 24, 39, 0.88);
+}
+
+.project-preview-nav-prev {
+    left: 10px;
+}
+
+.project-preview-nav-next {
+    right: 10px;
+}
+
+.portfolio-tap-cue {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    min-height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.78);
+    color: #ffffff;
+    display: none;
+    align-items: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 30px;
+    pointer-events: none;
+}
+
 .portfolio-project-title {
     display: block;
     font-size: clamp(1.35rem, 2vw, 1.8rem);
     font-weight: 800;
     line-height: 1.15;
-}
-
-.portfolio-project-meta {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--text-soft);
-    font-size: 1rem;
-    font-weight: 700;
-}
-
-.portfolio-project-meta span {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--accent);
 }
 
 .portfolio-project-detail {
@@ -451,9 +537,22 @@ button {
     transition: opacity 0.22s ease, transform 0.22s ease;
 }
 
-.virtual-thumbnail-card:hover img {
-    opacity: 0.88;
-    transform: scale(1.035);
+.virtual-thumbnail-before {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+}
+
+.virtual-thumbnail-after {
+    display: block;
+}
+
+.virtual-thumbnail-card:hover .virtual-thumbnail-before {
+    opacity: 1;
+}
+
+.virtual-thumbnail-card:hover .virtual-thumbnail-after {
+    opacity: 0;
 }
 
 .portfolio-gallery {
@@ -474,6 +573,10 @@ button {
     background: #0f172a;
     box-shadow: var(--shadow);
     aspect-ratio: 16 / 9;
+}
+
+.portfolio-feature.clickable {
+    cursor: pointer;
 }
 
 .portfolio-feature > img {
@@ -1393,7 +1496,7 @@ textarea {
 
 @media (max-width: 820px) {
     :root {
-        --header-height: auto;
+        --header-height: 82px;
     }
 
     .site-header {
@@ -1402,14 +1505,48 @@ textarea {
     }
 
     .header-inner {
-        padding: 16px 0;
-        flex-direction: column;
-        align-items: flex-start;
+        min-height: var(--header-height);
+        padding: 12px 0;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .brand-logo {
+        width: min(250px, calc(100vw - 104px));
+    }
+
+    .mobile-menu-toggle {
+        display: inline-flex;
+        margin-left: auto;
     }
 
     .main-nav {
         width: 100%;
-        justify-content: flex-start;
+        display: none;
+        align-items: stretch;
+        gap: 8px;
+        padding: 8px 0 4px;
+        flex-direction: column;
+    }
+
+    .main-nav.open {
+        display: flex;
+    }
+
+    .nav-link {
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        border-radius: 10px;
+        background: #ffffff;
+    }
+
+    .nav-cta {
+        width: 100%;
+        margin-left: 0;
+        justify-content: center;
     }
 
     .hero-section {
@@ -1431,8 +1568,14 @@ textarea {
     }
 
     .portfolio-feature {
-        min-height: 340px;
-        aspect-ratio: 4 / 3;
+        min-height: 0;
+        height: min(62vh, 420px);
+        aspect-ratio: auto;
+    }
+
+    .portfolio-feature > img,
+    .comparison-image {
+        object-fit: contain;
     }
 
     .gallery-nav {
@@ -1460,6 +1603,23 @@ textarea {
     .portfolio-project-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 30px 18px;
+    }
+
+    .portfolio-tap-cue {
+        display: inline-flex;
+    }
+
+    .portfolio-project-card,
+    .virtual-thumbnail-card {
+        cursor: pointer;
+    }
+
+    .project-preview-nav {
+        opacity: 1;
+    }
+
+    .virtual-thumbnail-after {
+        opacity: 1;
     }
 
     .virtual-thumbnail-grid {
