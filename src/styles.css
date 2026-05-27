@@ -276,17 +276,6 @@ button {
 .hero-image {
     object-fit: cover;
     z-index: 0;
-    animation: heroFade 1.3s ease;
-}
-
-@keyframes heroFade {
-    from {
-        opacity: 0.35;
-    }
-
-    to {
-        opacity: 1;
-    }
 }
 
 .hero-overlay {

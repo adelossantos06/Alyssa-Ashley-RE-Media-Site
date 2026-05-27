@@ -307,10 +307,6 @@ export const portfolioProjects = [...new Set(
     ))?.image
 }));
 
-export const heroImages = portfolioItems
-    .filter((item) => item.category !== "virtual")
-    .map((item) => item.image);
-
 export const aboutData = {
     heading: "About Me",
     intro: "Hi, I'm Alyssa!",

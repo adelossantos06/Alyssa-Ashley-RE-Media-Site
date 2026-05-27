@@ -5,7 +5,6 @@ import {
     services,
     portfolioItems,
     portfolioProjects,
-    heroImages,
     aboutData,
     serviceAreaGroups,
     pricingData,
@@ -24,17 +23,6 @@ function formatProjectLabel(value) {
         .filter(Boolean)
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
-}
-
-function getShuffledHeroImages(images) {
-    const shuffledImages = [...images];
-
-    for (let index = shuffledImages.length - 1; index > 0; index -= 1) {
-        const swapIndex = Math.floor(Math.random() * (index + 1));
-        [shuffledImages[index], shuffledImages[swapIndex]] = [shuffledImages[swapIndex], shuffledImages[index]];
-    }
-
-    return shuffledImages.slice(0, 12);
 }
 
 function BeforeAfterViewer({ beforeImage, afterImage, alt, value }) {
@@ -316,7 +304,6 @@ function App() {
     const [activeStagingIndex, setActiveStagingIndex] = useState(null);
     const [selectedProject, setSelectedProject] = useState(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [heroImageIndex, setHeroImageIndex] = useState(0);
     const [contactForm, setContactForm] = useState({
         name: "",
         email: "",
@@ -325,8 +312,6 @@ function App() {
     });
     const bookingSectionRef = useRef(null);
     const bookingEmbedRef = useRef(null);
-    const heroSlideshowImages = useMemo(() => getShuffledHeroImages(heroImages), []);
-    const activeHeroImage = heroSlideshowImages[heroImageIndex] ?? "/images/hero-home.jpg";
 
     const standardPortfolioItems = useMemo(() => (
         portfolioItems.filter((item) => item.category !== "virtual")
@@ -379,20 +364,6 @@ function App() {
     const closeMobileMenu = () => {
         setIsMobileMenuOpen(false);
     };
-
-    useEffect(() => {
-        if (heroSlideshowImages.length <= 1) {
-            return undefined;
-        }
-
-        const intervalId = window.setInterval(() => {
-            setHeroImageIndex((currentIndex) => (currentIndex + 1) % heroSlideshowImages.length);
-        }, 5200);
-
-        return () => {
-            window.clearInterval(intervalId);
-        };
-    }, [heroSlideshowImages.length]);
 
     const handleContactChange = (event) => {
         const { name, value } = event.target;
@@ -496,9 +467,8 @@ function App() {
                 <section id="home" className="hero-section">
                     <div className="hero-overlay" />
                     <img
-                        key={activeHeroImage}
                         className="hero-image"
-                        src={activeHeroImage}
+                        src="/images/hero-home.jpg"
                         alt="Luxury home exterior"
                     />
                     <div className="container hero-content">
