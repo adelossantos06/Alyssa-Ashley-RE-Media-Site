@@ -23,6 +23,26 @@ export const heroData = {
     }
 };
 
+export const virtualTourData = {
+    eyebrow: "Immersive Technology",
+    title: "360° Virtual Tours",
+    description:
+        "Let buyers explore every room from anywhere in the world. 360° walkthroughs increase engagement, reduce wasted showings, and make your listing stand out from the crowd.",
+    embedUrl: "https://mls.kuu.la/share/collection/7TT8g?fs=1&vr=1&zoom=1&sd=1&initload=0&thumbs=1",
+    previewImage: "/images/portfolio/Longwood/thumbnail.jpg",
+    previewAlt: "Covered outdoor living area with Hill Country views"
+};
+
+export const cinematicVideoData = {
+    eyebrow: "Video Services",
+    title: "Cinematic Video",
+    description:
+        "Professionally produced listing videos that tell your property's story, crafted to stop the scroll and drive inquiries.",
+    videoUrl: "https://www.youtube.com/embed/UHRECBX477M",
+    previewImage: "/images/hero-home.jpg",
+    previewAlt: "Luxury home exterior photographed for a real estate listing"
+};
+
 export const services = [
     {
         title: "Interior Photography",
@@ -49,16 +69,16 @@ export const services = [
         comingSoon: false
     },
     {
-        title: "Video Tours",
+        title: "Video",
         description:
-            "Walkthrough-style video coverage that helps listings feel more immersive and engaging.",
-        comingSoon: true
+            "Video tours, slideshow videos, and cinematic video options that help listings feel polished, immersive, and ready to share.",
+        comingSoon: false
     },
     {
-        title: "Aerial Photography",
+        title: "360 Walkthrough",
         description:
-            "Drone photography showcasing the property and surrounding area from above.",
-        comingSoon: true
+            "Interactive 360° walkthrough tours that let buyers move through the property room by room from anywhere.",
+        comingSoon: false
     }
 ];
 
@@ -422,6 +442,30 @@ export const pricingData = {
             price: "$20",
             unit: "per photo",
             description: "Stunning dusk edits that showcase your property's evening appeal"
+        },
+        {
+            name: "360 Walkthrough",
+            price: "$100",
+            unit: "",
+            description: "Interactive 360° property tour for buyers to explore the home online"
+        },
+        {
+            name: "360 Walkthrough + Floor Plan",
+            price: "$125",
+            unit: "",
+            description: "Interactive 360° walkthrough bundled with a professional 2D floor plan"
+        },
+        {
+            name: "Video Walkthrough",
+            price: "$150",
+            unit: "",
+            description: "Smooth walkthrough-style listing video ready for MLS, social media, and marketing"
+        },
+        {
+            name: "Cinematic Video",
+            price: "$250",
+            unit: "",
+            description: "Polished cinematic property video with elevated movement, pacing, and presentation"
         }
     ]
 };
@@ -506,9 +550,10 @@ export const footerData = {
     services: [
         "Interior Photography",
         "Exterior Photography",
-        "Video Tours",
+        "Video",
         "Twilight Photography",
-        "Virtual Staging"
+        "Virtual Staging",
+        "360 Walkthrough"
     ],
     copyright: "© 2026 Alyssa Ashley Real Estate Media. All rights reserved."
 };

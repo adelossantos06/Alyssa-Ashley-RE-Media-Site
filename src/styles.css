@@ -474,6 +474,182 @@ button {
     font-weight: 800;
 }
 
+.portfolio-tour-showcase {
+    display: grid;
+    gap: 24px;
+    max-width: 940px;
+    margin: 82px auto 0;
+}
+
+.portfolio-tour-copy {
+    max-width: 780px;
+    margin: 0 auto 20px;
+    text-align: center;
+}
+
+.section-eyebrow {
+    margin: 0 0 10px;
+    color: var(--accent-dark);
+    font-size: 0.82rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.portfolio-tour-copy h3 {
+    margin: 0 0 14px;
+    color: var(--heading);
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.05;
+}
+
+.portfolio-tour-copy p:last-child {
+    margin: 0;
+    color: var(--text-soft);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.45;
+}
+
+.virtual-tour-media {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #111827;
+    box-shadow: var(--shadow);
+    aspect-ratio: 16 / 9;
+}
+
+.virtual-tour-media iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.virtual-tour-preview {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    color: #ffffff;
+}
+
+.virtual-tour-preview::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(15, 23, 42, 0.16) 0%,
+        rgba(15, 23, 42, 0.36) 58%,
+        rgba(15, 23, 42, 0.5) 100%
+    );
+}
+
+.cinematic-video-showcase {
+    margin-top: 72px;
+}
+
+.cinematic-video-preview::after {
+    background: rgba(17, 24, 39, 0.52);
+    backdrop-filter: blur(3px) grayscale(0.25);
+}
+
+.cinematic-video-preview img {
+    filter: grayscale(0.2);
+}
+
+.virtual-tour-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.virtual-tour-pill,
+.virtual-tour-launch,
+.virtual-tour-play {
+    position: absolute;
+    z-index: 2;
+}
+
+.virtual-tour-pill {
+    top: 16px;
+    left: 16px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.74);
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.virtual-tour-pill::before {
+    content: "↻";
+    margin-right: 8px;
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.cinematic-video-pill::before {
+    content: "";
+    margin: 0;
+}
+
+.virtual-tour-play {
+    top: 50%;
+    left: 50%;
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 14px 34px rgba(17, 24, 39, 0.24);
+}
+
+.virtual-tour-play span {
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-left: 22px solid #ffffff;
+}
+
+.virtual-tour-launch {
+    top: calc(50% + 58px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.95rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 2px 12px rgba(15, 23, 42, 0.55);
+    white-space: nowrap;
+}
+
+.virtual-tour-link {
+    justify-self: start;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    margin-top: 12px;
+    padding: 0 16px;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    background: var(--accent);
+    color: #ffffff;
+    font-weight: 900;
+}
+
+.virtual-tour-link:hover {
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+}
+
 .virtual-showcase {
     display: grid;
     gap: 18px;
@@ -735,19 +911,6 @@ button {
     opacity: 0.55;
 }
 
-.service-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--accent-soft);
-    color: var(--accent);
-    font-size: 1.1rem;
-    margin-bottom: 18px;
-}
-
 .service-card-header {
     display: flex;
     align-items: center;
@@ -760,7 +923,7 @@ button {
     margin: 0;
     font-size: 1.6rem;
     line-height: 1.2;
-    color: var(--heading);
+    color: var(--accent);
 }
 
 .service-card p {
@@ -947,11 +1110,25 @@ button {
     border: 2px solid var(--accent);
 }
 
+.add-on-card-banner {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(180px, auto) auto minmax(260px, 1fr);
+    align-items: center;
+    gap: 18px 28px;
+    padding: 28px 34px;
+    text-align: left;
+}
+
 .add-on-card h4 {
     margin: 0 0 14px;
     color: var(--heading);
     font-size: 2rem;
     line-height: 1.15;
+}
+
+.add-on-card-banner h4 {
+    margin: 0;
 }
 
 .add-on-price {
@@ -962,11 +1139,20 @@ button {
     font-weight: 800;
 }
 
+.add-on-card-banner .add-on-price {
+    margin: 0;
+    text-align: center;
+}
+
 .add-on-unit,
 .add-on-description {
     margin: 0;
     color: var(--text-soft);
     line-height: 1.5;
+}
+
+.add-on-card-banner .add-on-unit {
+    grid-column: 2;
 }
 
 .add-on-unit {
@@ -1556,6 +1742,20 @@ textarea {
         grid-template-columns: 1fr;
     }
 
+    .add-on-card-banner {
+        display: block;
+        padding: 32px 28px 26px;
+        text-align: center;
+    }
+
+    .add-on-card-banner h4 {
+        margin-bottom: 14px;
+    }
+
+    .add-on-card-banner .add-on-price {
+        margin-bottom: 12px;
+    }
+
     .portfolio-feature {
         min-height: 0;
         height: min(62vh, 420px);
@@ -1592,6 +1792,35 @@ textarea {
     .portfolio-project-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 30px 18px;
+    }
+
+    .portfolio-tour-showcase {
+        margin-top: 64px;
+    }
+
+    .portfolio-tour-copy {
+        margin-bottom: 10px;
+    }
+
+    .virtual-tour-media {
+        aspect-ratio: 4 / 3;
+    }
+
+    .virtual-tour-play {
+        width: 60px;
+        height: 60px;
+    }
+
+    .virtual-tour-play span {
+        border-top-width: 12px;
+        border-bottom-width: 12px;
+        border-left-width: 18px;
+    }
+
+    .virtual-tour-launch {
+        top: calc(50% + 48px);
+        width: calc(100% - 32px);
+        white-space: normal;
     }
 
     .portfolio-tap-cue {
@@ -1667,6 +1896,14 @@ textarea {
     .portfolio-project-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 28px 12px;
+    }
+
+    .virtual-tour-pill {
+        top: 10px;
+        left: 10px;
+        min-height: 32px;
+        padding: 0 10px;
+        font-size: 0.8rem;
     }
 
     .virtual-thumbnail-grid {

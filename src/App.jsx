@@ -2,6 +2,8 @@ import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "re
 import {
     navLinks,
     heroData,
+    virtualTourData,
+    cinematicVideoData,
     services,
     portfolioItems,
     portfolioProjects,
@@ -298,6 +300,100 @@ function VirtualShowcase({ title, items, activeIndex, onActiveIndexChange }) {
     );
 }
 
+function VirtualTourEmbed({ tour }) {
+    const hasEmbedUrl = tour.embedUrl.trim().length > 0;
+
+    return (
+        <div className="portfolio-tour-showcase">
+            <div className="portfolio-tour-copy">
+                <p className="section-eyebrow">{tour.eyebrow}</p>
+                <h3>{tour.title}</h3>
+                <p>{tour.description}</p>
+            </div>
+
+            <div className="virtual-tour-media">
+                {hasEmbedUrl ? (
+                    <iframe
+                        title={tour.title}
+                        src={tour.embedUrl}
+                        loading="lazy"
+                        allow="fullscreen; accelerometer; gyroscope; magnetometer; vr; xr-spatial-tracking"
+                        allowFullScreen
+                    />
+                ) : (
+                    <div className="virtual-tour-preview" aria-label={`${tour.title} preview`}>
+                        <img src={tour.previewImage} alt={tour.previewAlt} />
+                        <span className="virtual-tour-pill">360° Virtual Tour</span>
+                        <span className="virtual-tour-play" aria-hidden="true">
+                            <span />
+                        </span>
+                        <span className="virtual-tour-launch">Launch 360° Tour</span>
+                    </div>
+                )}
+            </div>
+
+            {hasEmbedUrl && (
+                <a
+                    className="virtual-tour-link"
+                    href={tour.embedUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    Open 360° Tour
+                </a>
+            )}
+        </div>
+    );
+}
+
+function CinematicVideoExample({ video }) {
+    const hasVideoUrl = video.videoUrl.trim().length > 0;
+
+    return (
+        <div className="portfolio-tour-showcase cinematic-video-showcase">
+            <div className="portfolio-tour-copy">
+                <p className="section-eyebrow">{video.eyebrow}</p>
+                <h3>{video.title}</h3>
+                <p>{video.description}</p>
+            </div>
+
+            <div className="virtual-tour-media cinematic-video-media">
+                {hasVideoUrl ? (
+                    <iframe
+                        title={video.title}
+                        src={video.videoUrl}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                    />
+                ) : (
+                    <div className="virtual-tour-preview cinematic-video-preview" aria-label={`${video.title} preview`}>
+                        <img src={video.previewImage} alt={video.previewAlt} />
+                        <span className="virtual-tour-pill cinematic-video-pill">Cinematic Video</span>
+                        <span className="virtual-tour-play" aria-hidden="true">
+                            <span />
+                        </span>
+                        <span className="virtual-tour-launch">Watch Video</span>
+                    </div>
+                )}
+            </div>
+
+            {hasVideoUrl && (
+                <a
+                    className="virtual-tour-link"
+                    href={video.videoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    Open Video
+                </a>
+            )}
+        </div>
+    );
+}
+
+const showLimitedTimeOffer = false;
+
 function App() {
     const [activePortfolioIndex, setActivePortfolioIndex] = useState(0);
     const [activeTwilightIndex, setActiveTwilightIndex] = useState(null);
@@ -558,6 +654,14 @@ function App() {
                             />
                         </div>
                     </div>
+
+                    <div className="container">
+                        <VirtualTourEmbed tour={virtualTourData} />
+                    </div>
+
+                    <div className="container">
+                        <CinematicVideoExample video={cinematicVideoData} />
+                    </div>
                 </section>
 
                 <section id="services" className="section section-soft">
@@ -573,9 +677,6 @@ function App() {
                                     key={service.title}
                                     className={`service-card ${service.comingSoon ? "muted" : ""}`}
                                 >
-                                    <div className="service-icon" aria-hidden="true">
-                                        <span>□</span>
-                                    </div>
                                     <div className="service-card-header">
                                         <h3>{service.title}</h3>
                                         {service.comingSoon && <span className="coming-soon-badge">Coming Soon</span>}
@@ -641,14 +742,16 @@ function App() {
                         </p>
                     </div>
 
-                    <div className="container">
-                        <div className="pricing-promo-banner" role="note" aria-label="New customer promotion">
-                            <span className="pricing-promo-eyebrow">Limited-Time Offer</span>
-                            <p>
-                                First-time customers get 50% off their first shoot — use code <strong><u>NEW50</u></strong>.
-                            </p>
+                    {showLimitedTimeOffer && (
+                        <div className="container">
+                            <div className="pricing-promo-banner" role="note" aria-label="New customer promotion">
+                                <span className="pricing-promo-eyebrow">Limited-Time Offer</span>
+                                <p>
+                                    First-time customers get 50% off their first shoot — use code <strong><u>NEW50</u></strong>.
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="container narrow-header narrow-header-tight">
                         <h3>Photography Packages</h3>
@@ -683,8 +786,11 @@ function App() {
                         </div>
 
                         <div className="add-on-grid">
-                            {pricingData.addOns.map((addOn) => (
-                                <article key={addOn.name} className="add-on-card">
+                            {pricingData.addOns.map((addOn, index) => (
+                                <article
+                                    key={addOn.name}
+                                    className={`add-on-card ${index === pricingData.addOns.length - 1 ? "add-on-card-banner" : ""}`}
+                                >
                                     <h4>{addOn.name}</h4>
                                     <div className="add-on-price">{addOn.price}</div>
                                     {addOn.unit && <p className="add-on-unit">{addOn.unit}</p>}
@@ -719,14 +825,16 @@ function App() {
                         <p>Use the booking form below to submit your shoot request.</p>
                     </div>
 
-                    <div className="container">
-                        <div className="pricing-promo-banner" role="note" aria-label="New customer promotion">
-                            <span className="pricing-promo-eyebrow">Limited-Time Offer</span>
-                            <p>
-                                First-time customers get 50% off their first shoot — use code <strong><u>NEW50</u></strong>.
-                            </p>
+                    {showLimitedTimeOffer && (
+                        <div className="container">
+                            <div className="pricing-promo-banner" role="note" aria-label="New customer promotion">
+                                <span className="pricing-promo-eyebrow">Limited-Time Offer</span>
+                                <p>
+                                    First-time customers get 50% off their first shoot — use code <strong><u>NEW50</u></strong>.
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="container">
                         <div className="booking-card booking-embed-shell">
