@@ -1100,24 +1100,19 @@ button {
 
 .add-on-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 24px;
 }
 
 .add-on-card {
+    grid-column: span 2;
     padding: 32px 28px 26px;
     text-align: center;
     border: 2px solid var(--accent);
 }
 
-.add-on-card-banner {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: minmax(180px, auto) auto minmax(260px, 1fr);
-    align-items: center;
-    gap: 18px 28px;
-    padding: 28px 34px;
-    text-align: left;
+.add-on-card-wide {
+    grid-column: span 3;
 }
 
 .add-on-card h4 {
@@ -1125,10 +1120,6 @@ button {
     color: var(--heading);
     font-size: 2rem;
     line-height: 1.15;
-}
-
-.add-on-card-banner h4 {
-    margin: 0;
 }
 
 .add-on-price {
@@ -1139,20 +1130,11 @@ button {
     font-weight: 800;
 }
 
-.add-on-card-banner .add-on-price {
-    margin: 0;
-    text-align: center;
-}
-
 .add-on-unit,
 .add-on-description {
     margin: 0;
     color: var(--text-soft);
     line-height: 1.5;
-}
-
-.add-on-card-banner .add-on-unit {
-    grid-column: 2;
 }
 
 .add-on-unit {
@@ -1742,18 +1724,9 @@ textarea {
         grid-template-columns: 1fr;
     }
 
-    .add-on-card-banner {
-        display: block;
-        padding: 32px 28px 26px;
-        text-align: center;
-    }
-
-    .add-on-card-banner h4 {
-        margin-bottom: 14px;
-    }
-
-    .add-on-card-banner .add-on-price {
-        margin-bottom: 12px;
+    .add-on-card,
+    .add-on-card-wide {
+        grid-column: auto;
     }
 
     .portfolio-feature {

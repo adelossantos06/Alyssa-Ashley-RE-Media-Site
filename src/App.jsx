@@ -786,13 +786,13 @@ function App() {
                         </div>
 
                         <div className="add-on-grid">
-                            {pricingData.addOns.map((addOn, index) => (
+                            {pricingData.addOns.map((addOn) => (
                                 <article
                                     key={addOn.name}
-                                    className={`add-on-card ${index === pricingData.addOns.length - 1 ? "add-on-card-banner" : ""}`}
+                                    className={`add-on-card ${["Video Walkthrough", "Cinematic Video"].includes(addOn.name) ? "add-on-card-wide" : ""}`}
                                 >
                                     <h4>{addOn.name}</h4>
-                                    <div className="add-on-price">{addOn.price}</div>
+                                    {addOn.price && <div className="add-on-price">{addOn.price}</div>}
                                     {addOn.unit && <p className="add-on-unit">{addOn.unit}</p>}
                                     <p className="add-on-description">{addOn.description}</p>
                                 </article>

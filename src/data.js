@@ -456,16 +456,22 @@ export const pricingData = {
             description: "Interactive 360° walkthrough bundled with a professional 2D floor plan"
         },
         {
+            name: "Slideshow Video",
+            price: "$75",
+            unit: "",
+            description: "Turn your listing photos into a polished video slideshow with smooth transitions and background music."
+        },
+        {
             name: "Video Walkthrough",
             price: "$150",
             unit: "",
-            description: "Smooth walkthrough-style listing video ready for MLS, social media, and marketing"
+            description: "A video tour that simulates an in-person walkthrough, helping potential buyers easily follow the layout and move from room to room, with smooth transitions and background music."
         },
         {
             name: "Cinematic Video",
             price: "$250",
             unit: "",
-            description: "Polished cinematic property video with elevated movement, pacing, and presentation"
+            description: "A polished video showcasing the home at its best with intentional camera movements, detail shots, creative editing, and licensed music."
         }
     ]
 };
