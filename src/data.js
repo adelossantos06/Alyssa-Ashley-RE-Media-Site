@@ -24,7 +24,6 @@ export const heroData = {
 };
 
 export const virtualTourData = {
-    eyebrow: "Immersive Technology",
     title: "360° Virtual Tours",
     description:
         "Let buyers explore every room from anywhere in the world. 360° walkthroughs increase engagement, reduce wasted showings, and make your listing stand out from the crowd.",
@@ -34,7 +33,6 @@ export const virtualTourData = {
 };
 
 export const cinematicVideoData = {
-    eyebrow: "Video Services",
     title: "Cinematic Video",
     description:
         "Professionally produced listing videos that tell your property's story, crafted to stop the scroll and drive inquiries.",

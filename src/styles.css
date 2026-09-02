@@ -1888,9 +1888,12 @@ textarea {
         font-size: 1.2rem;
     }
 
-    .brand-logo,
+    .brand-logo {
+        width: min(250px, calc(100vw - 104px));
+    }
+
     .footer-logo {
-        width: 250px;
+        width: min(250px, 100%);
     }
 
     .hero-actions,

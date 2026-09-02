@@ -33,9 +33,9 @@ function BeforeAfterViewer({ beforeImage, afterImage, alt, value }) {
             className="comparison-slider"
             style={{ "--comparison-opacity": value / 100 }}
         >
-            <img className="comparison-image" src={beforeImage} alt={`${alt} before`} />
+            <img className="comparison-image" src={beforeImage} alt={`${alt} before`} loading="lazy" decoding="async" />
             <div className="comparison-after">
-                <img className="comparison-image" src={afterImage} alt={`${alt} after`} />
+                <img className="comparison-image" src={afterImage} alt={`${alt} after`} loading="lazy" decoding="async" />
             </div>
             <span className="comparison-label comparison-label-before">Before</span>
             <span className="comparison-label comparison-label-after">After</span>
@@ -109,7 +109,7 @@ function PortfolioGallery({ items, activeIndex, onActiveIndexChange }) {
                             value={comparisonValue}
                         />
                     ) : (
-                        <img src={activeItem.image} alt={activeItem.alt} />
+                        <img src={activeItem.image} alt={activeItem.alt} loading="lazy" decoding="async" />
                     )}
                 </figure>
 
@@ -157,7 +157,7 @@ function PortfolioGallery({ items, activeIndex, onActiveIndexChange }) {
                                 onActiveIndexChange(index);
                             }}
                         >
-                            <img src={item.comparison ? item.afterImage : item.image} alt="" />
+                            <img src={item.comparison ? item.afterImage : item.image} alt="" loading="lazy" decoding="async" />
                         </button>
                     ))}
                 </div>
@@ -198,7 +198,7 @@ function PortfolioProjectGrid({ projects, onSelectProject }) {
                             aria-label={`View ${project.label} portfolio collection`}
                             onClick={() => onSelectProject(project.id)}
                         >
-                            <img src={previewImage} alt="" />
+                            <img src={previewImage} alt="" loading="lazy" decoding="async" />
                         </button>
                         {hasMultipleImages && (
                             <>
@@ -244,8 +244,8 @@ function VirtualThumbnailGrid({ items, onSelectItem }) {
                         onClick={() => onSelectItem(item.id)}
                     >
                         <span className="portfolio-clickable-media">
-                            <img className="virtual-thumbnail-after" src={item.afterImage} alt="" />
-                            <img className="virtual-thumbnail-before" src={item.beforeImage} alt="" />
+                            <img className="virtual-thumbnail-after" src={item.afterImage} alt="" loading="lazy" decoding="async" />
+                            <img className="virtual-thumbnail-before" src={item.beforeImage} alt="" loading="lazy" decoding="async" />
                             <span className="portfolio-tap-cue">Compare</span>
                         </span>
                     </button>
@@ -306,7 +306,6 @@ function VirtualTourEmbed({ tour }) {
     return (
         <div className="portfolio-tour-showcase">
             <div className="portfolio-tour-copy">
-                <p className="section-eyebrow">{tour.eyebrow}</p>
                 <h3>{tour.title}</h3>
                 <p>{tour.description}</p>
             </div>
@@ -322,7 +321,7 @@ function VirtualTourEmbed({ tour }) {
                     />
                 ) : (
                     <div className="virtual-tour-preview" aria-label={`${tour.title} preview`}>
-                        <img src={tour.previewImage} alt={tour.previewAlt} />
+                        <img src={tour.previewImage} alt={tour.previewAlt} loading="lazy" decoding="async" />
                         <span className="virtual-tour-pill">360° Virtual Tour</span>
                         <span className="virtual-tour-play" aria-hidden="true">
                             <span />
@@ -352,7 +351,6 @@ function CinematicVideoExample({ video }) {
     return (
         <div className="portfolio-tour-showcase cinematic-video-showcase">
             <div className="portfolio-tour-copy">
-                <p className="section-eyebrow">{video.eyebrow}</p>
                 <h3>{video.title}</h3>
                 <p>{video.description}</p>
             </div>
@@ -368,7 +366,7 @@ function CinematicVideoExample({ video }) {
                     />
                 ) : (
                     <div className="virtual-tour-preview cinematic-video-preview" aria-label={`${video.title} preview`}>
-                        <img src={video.previewImage} alt={video.previewAlt} />
+                        <img src={video.previewImage} alt={video.previewAlt} loading="lazy" decoding="async" />
                         <span className="virtual-tour-pill cinematic-video-pill">Cinematic Video</span>
                         <span className="virtual-tour-play" aria-hidden="true">
                             <span />
@@ -566,6 +564,8 @@ function App() {
                         className="hero-image"
                         src="/images/hero-home.jpg"
                         alt="Luxury home exterior"
+                        fetchPriority="high"
+                        decoding="async"
                     />
                     <div className="container hero-content">
                         <h1>
@@ -755,6 +755,7 @@ function App() {
 
                     <div className="container narrow-header narrow-header-tight">
                         <h3>Photography Packages</h3>
+                        <p>Sky replacement &amp; minor blemish removal included</p>
                     </div>
 
                     <div className="container">
